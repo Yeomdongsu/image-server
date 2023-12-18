@@ -1,1 +1,1 @@
-# image-server
+# posting-server
