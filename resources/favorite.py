@@ -8,10 +8,9 @@ from mysql_connection import get_connection
 class FavoriteResource(Resource) :
     # 좋아요 추가
     @jwt_required()
-    def post(self) :
+    def post(self, favoriteId) :
 
         user_id = get_jwt_identity()
-        posting = request.args.get("posting")
 
         try :
             connection = get_connection()
@@ -23,7 +22,7 @@ class FavoriteResource(Resource) :
                     (%s, %s);
                     '''
             
-            record = (user_id, posting)
+            record = (user_id, favoriteId)
 
             cursor = connection.cursor()
             cursor.execute(query, record)
@@ -42,10 +41,9 @@ class FavoriteResource(Resource) :
     
     # 좋아요 삭제
     @jwt_required()
-    def delete(self) :
+    def delete(self, favoriteId) :
 
         user_id = get_jwt_identity()
-        posting = request.args.get("posting")
 
         try :
             connection = get_connection()
@@ -55,7 +53,7 @@ class FavoriteResource(Resource) :
                     where userId = %s and postingId = %s;
                     '''
             
-            record = (user_id, posting)
+            record = (user_id, favoriteId)
 
             cursor = connection.cursor()
             cursor.execute(query, record)

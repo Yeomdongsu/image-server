@@ -33,7 +33,7 @@ api.add_resource(UserLoginResource, "/user/login")
 api.add_resource(UserLogoutResourcce, "/user/logout")
 api.add_resource(PostingListResource, "/posting")
 api.add_resource(FollowResource, "/follow/<int:followee_id>")
-api.add_resource(FavoriteResource, "/favorite")
+api.add_resource(FavoriteResource, "/favorite/<int:favoriteId>")
 api.add_resource(PostingResource, "/posting/<int:postId>")
 
 if __name__ == "__main__" :
