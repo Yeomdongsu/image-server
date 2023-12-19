@@ -11,19 +11,19 @@ class FavoriteResource(Resource) :
     def post(self) :
 
         user_id = get_jwt_identity()
-        image = request.args.get("image")
+        posting = request.args.get("posting")
 
         try :
             connection = get_connection()
 
             query = '''
                     insert into favorite
-                    (userId, imageId)
+                    (userId, postingId)
                     values
                     (%s, %s);
                     '''
             
-            record = (user_id, image)
+            record = (user_id, posting)
 
             cursor = connection.cursor()
             cursor.execute(query, record)
@@ -45,17 +45,17 @@ class FavoriteResource(Resource) :
     def delete(self) :
 
         user_id = get_jwt_identity()
-        image = request.args.get("image")
+        posting = request.args.get("posting")
 
         try :
             connection = get_connection()
 
             query = '''
                     delete from favorite
-                    where userId = %s and imageId = %s;
+                    where userId = %s and postingId = %s;
                     '''
             
-            record = (user_id, image)
+            record = (user_id, posting)
 
             cursor = connection.cursor()
             cursor.execute(query, record)
