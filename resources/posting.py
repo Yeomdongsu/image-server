@@ -243,10 +243,7 @@ class PostingResource(Resource) :
             if result_list[0]["postId"] is None :
                 return {"error" : "존재하지 않는 포스팅입니다."}, 400
 
-            i = 0
-            for row in result_list :
-                result_list[i]["createdAt"] = row["createdAt"].isoformat()
-                i = i+1
+            result_list[0]["createdAt"] = result_list[0]["createdAt"].isoformat()
 
             query = '''
                     select tn.name
@@ -274,5 +271,8 @@ class PostingResource(Resource) :
 
         except Error as e :
             print(e)
+            cursor.close()
+            connection.close()
+            return {"error" : str(e)}, 500
 
         return {"result" : "success", "post" : result_list, "tag" : re_tag}, 200
