@@ -170,10 +170,12 @@ class PostingListResource(Resource) :
             connection = get_connection()
 
             query = '''
-                    select p.id as postId, p.imageUrl, p.content, u.email, p.createdAt, ifnull(count(f.id), 0) as favoriteCnt
+                    select p.id as postId, p.imageUrl, p.content, u.email, p.createdAt, ifnull(count(f.id), 0) as favoriteCnt, if(fa2.id is null, 0, 1) as isFavorite
                     from posting p
                     left join favorite f
                     on p.id = f.postingId
+                    left join favorite fa2
+                    on p.id = fa2.postingId and fa2.userId = %s  
                     join user u
                     on p.userId = u.id
                     where p.userId = %s
@@ -182,7 +184,7 @@ class PostingListResource(Resource) :
                     limit ''' + offset + ''', ''' + limit + ''';
                     '''
             
-            record = (user_id, )
+            record = (user_id, user_id)
 
             cursor = connection.cursor(dictionary=True)
             cursor.execute(query, record)
