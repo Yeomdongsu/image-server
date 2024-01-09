@@ -291,7 +291,7 @@ class PostingMeResource(Resource) :
             connection = get_connection()
 
             query = '''
-                    select p.id as postId, p.imageUrl, p.content, u.email, p.createdAt, ifnull(count(f.id), 0) as favoriteCnt, if(fa2.id is null, 0, 1) as isFavorite
+                    select p.id as postId, p.imageUrl, p.content, p.userId, u.email, p.createdAt, ifnull(count(f.id), 0) as favoriteCnt, if(fa2.id is null, 0, 1) as isFavorite
                     from posting p
                     left join favorite f
                     on p.id = f.postingId
