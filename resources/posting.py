@@ -157,7 +157,7 @@ class PostingListResource(Resource) :
 
         return label_list
 
-    # 내 친구 포스팅만 보기
+    # 내 포스팅만 보기 / 내 친구 포스팅만 보기 
     @jwt_required()
     def get(self) :
 
@@ -170,23 +170,19 @@ class PostingListResource(Resource) :
             connection = get_connection()
 
             query = '''
-                    select p.id as postId, p.imageUrl, p.content, u.id as userId, u.email, p.createdAt, count(fa.id) as favoriteCnt, if(fa2.id is null, 0, 1) as isFavorite
-                    from follow f
-                    join posting p
-                    on f.followeeId = p.userId
+                    select p.id as postId, p.imageUrl, p.content, u.email, p.createdAt, ifnull(count(f.id), 0) as favoriteCnt
+                    from posting p
+                    left join favorite f
+                    on p.id = f.postingId
                     join user u
                     on p.userId = u.id
-                    left join favorite fa
-                    on p.id = fa.postingId
-                    left join favorite fa2
-                    on p.id = fa2.postingId and fa2.userId = %s  
-                    where f.followerId = %s
+                    where p.userId = %s
                     group by p.id
                     order by p.createdAt desc
                     limit ''' + offset + ''', ''' + limit + ''';
                     '''
             
-            record = (user_id, user_id)
+            record = (user_id, )
 
             cursor = connection.cursor(dictionary=True)
             cursor.execute(query, record)
@@ -211,6 +207,60 @@ class PostingListResource(Resource) :
             return {"error" : "포스팅된 글이 없습니다."}, 400
 
         return {"result" : "success", "items" : result_list, "count" : len(result_list)}, 200
+
+    # @jwt_required()
+    # def get(self) :
+
+    #     user_id = get_jwt_identity()
+
+    #     offset = request.args.get("offset")
+    #     limit = request.args.get("limit")
+
+    #     try :
+    #         connection = get_connection()
+
+    #         query = '''
+    #                 select p.id as postId, p.imageUrl, p.content, u.id as userId, u.email, p.createdAt, count(fa.id) as favoriteCnt, if(fa2.id is null, 0, 1) as isFavorite
+    #                 from follow f
+    #                 join posting p
+    #                 on f.followeeId = p.userId
+    #                 join user u
+    #                 on p.userId = u.id
+    #                 left join favorite fa
+    #                 on p.id = fa.postingId
+    #                 left join favorite fa2
+    #                 on p.id = fa2.postingId and fa2.userId = %s  
+    #                 where f.followerId = %s
+    #                 group by p.id
+    #                 order by p.createdAt desc
+    #                 limit ''' + offset + ''', ''' + limit + ''';
+    #                 '''
+            
+    #         record = (user_id, user_id)
+
+    #         cursor = connection.cursor(dictionary=True)
+    #         cursor.execute(query, record)
+
+    #         result_list = cursor.fetchall()
+
+    #         i = 0
+    #         for row in result_list :
+    #             result_list[i]["createdAt"] = row["createdAt"].isoformat()
+    #             i = i+1
+
+    #         cursor.close()
+    #         connection.close()
+
+    #     except Error as e :
+    #         print(e)
+    #         cursor.close()
+    #         connection.close()
+    #         return {"result" : "fail", "error" : str(e)}, 500
+
+    #     if len(result_list) == 0 :
+    #         return {"error" : "포스팅된 글이 없습니다."}, 400
+
+    #     return {"result" : "success", "items" : result_list, "count" : len(result_list)}, 200
 
 # 포스팅 상세 보기(태그까지)
 class PostingResource(Resource) :
