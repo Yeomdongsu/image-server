@@ -4,7 +4,7 @@ from flask_restful import Api
 from config import Config
 from resources.favorite import FavoriteResource
 from resources.follow import FollowResource
-from resources.posting import PostingListResource, PostingResource
+from resources.posting import PostingListResource, PostingMeResource, PostingResource
 from resources.user import UserLoginResource, UserLogoutResourcce, UserRegisterResource
 # 로그아웃 관련된 import문
 from resources.user import jwt_blocklist
@@ -31,10 +31,11 @@ api = Api(app)
 api.add_resource(UserRegisterResource, "/user/register")
 api.add_resource(UserLoginResource, "/user/login")
 api.add_resource(UserLogoutResourcce, "/user/logout")
-api.add_resource(PostingListResource, "/posting")
+api.add_resource(PostingListResource, "/posting") # 친구 포스팅
 api.add_resource(FollowResource, "/follow/<int:followee_id>")
 api.add_resource(FavoriteResource, "/favorite/<int:favoriteId>")
 api.add_resource(PostingResource, "/posting/<int:postId>")
+api.add_resource(PostingMeResource, "/posting/me") # 내 포스팅
 
 if __name__ == "__main__" :
     app.run()
